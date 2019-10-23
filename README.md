@@ -32,6 +32,14 @@ Si validation de la saisie:
 Options/Bonus:
 - export des listes: téléchargement du json (il faudrait alors pouvoir importer ce même fichier), envoi de mail (voir l'API Gmail)
 
+
+icones:
+C:\packImages\guimegapack_windows\guimegapack\Cartoon_UI\Cartoon_GUI_04
+
+C:\packImages\tabletopbadges_windows\tabletopbadges\TabletopBadges_png
+
+
+
 ## Project setup
 ```
 npm install
