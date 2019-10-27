@@ -1,8 +1,5 @@
 <template>
     <div>
-        lists
-
-        
         <list-game
             v-for="list in lists"
             :key="list.id"

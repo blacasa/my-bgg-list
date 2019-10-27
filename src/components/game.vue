@@ -6,7 +6,7 @@
             class="game-card">
             <b-container fluid>
                 <b-row class="my-1">
-                    <b-col sm="1">
+                    <b-col sm="1" v-if="isEditable">
                         <b-form-checkbox
                             :id="checkboxId"
                             v-model="game.selected"
@@ -37,6 +37,7 @@ export default {
     props: {
         game: {},
         idx: Number,
+        mode: String,
     },
     data: function() {
         return {
@@ -48,6 +49,11 @@ export default {
         this.checkboxId = 'checkbox-' + this.idx;
         if (typeof this.game.selected === 'undefined') {
             this.game.selected = 'uncheck';
+        }
+    },
+    computed: {
+        isEditable: function() {
+            return this.mode === 'EDIT';
         }
     },
     methods: {

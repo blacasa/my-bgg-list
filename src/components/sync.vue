@@ -13,6 +13,9 @@
         <div id="btn-sync-div">
             <b-button id="btn-sync" :disabled="!state" variant="outline-primary" v-on:click="synchronization">Sync</b-button>
         </div>
+        <div id="btn-sync-div">
+            <b-button id="btn-sync" :disabled="!state" variant="outline-primary" v-on:click="synchronizationXML">Sync XML</b-button>
+        </div>
     </div>
 </template>
 
@@ -44,12 +47,22 @@ export default {
     methods: {
         synchronization: function() {
             var component = this;
-            syncService.sync(this.name)
-            .then(function(gameList) {
-                // On stocke la liste des jeux dans le localStorage
-                localStorage.setItem(constant.GAME_LIST_ID, JSON.stringify(gameList));
-                component.$router.push({ name: 'games', params: { list: constant.GAME_LIST_ID } })
-            });
+            syncService
+                .sync(this.name)
+                .then(function(gameList) {
+                    // On stocke la liste des jeux dans le localStorage
+                    localStorage.setItem(constant.GAME_LIST_ID, JSON.stringify(gameList));
+                    component.$router.push({ name: 'games', params: { list: constant.GAME_LIST_ID } })
+                });
+        },
+        synchronizationXML: function() {
+            // TODO: gestion d'un spinner
+            syncService
+                .syncBGG(this.name)
+                .then(function(gameList) {
+console.log('gameList:');
+//console.log(gameList);
+                });
         }
     }
 }

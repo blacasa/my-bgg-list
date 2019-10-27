@@ -33,6 +33,7 @@
             :key="game.gameId"
             v-bind:game="game"
             v-bind:idx="index"
+            v-bind:mode="mode"
             v-on:game-selected-event="selectGame"
             v-on:game-unselected-event="unselectGame"/>
     </div>
@@ -55,6 +56,7 @@ export default {
             gameList: [],
             selectedGames: [],
             saveListName: '',
+            mode: 'EDIT',
         }
     },
     computed: {
