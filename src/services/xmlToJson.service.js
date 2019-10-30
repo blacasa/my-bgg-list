@@ -5,7 +5,6 @@ export default {
     convertCollectionToJson(xml) {
         let jsonList = [];
         parseString(xml, function (err, list) {
-console.log(list);
             list.items.item.forEach(gameXml => {
                 let game = {};
                 game.gameId = gameXml.$.objectid;
@@ -35,7 +34,6 @@ console.log(list);
                 game.wishList = -1;
                 game.userComment = -1;
 
-console.log(game);
                 jsonList.push(game);
             });
           });
@@ -44,17 +42,53 @@ console.log(game);
     convertThingsToJson(thingsXml) {
         let jsonList = [];
         parseString(thingsXml, function (err, list) {
-console.log(list);
             list.items.item.forEach(gameXml => {
                 // Convert thingXml to thingJson
                 var thingJson = {};
-                
+                thingJson.gameId = gameXml.$.id;
                 thingJson.isExpansion = -1;
                 thingJson.bggRating = -1;
-                thingJson.averageRating = -1;
-                thingJson.rank = -1;
+                thingJson.averageRating = gameXml.statistics[0].ratings[0].average[0].$.value;
+                // Récupération du rang BGG
+                let bggRank = gameXml.statistics[0].ratings[0].ranks[0].rank.filter(function(rank) {
+                    return rank.$.id == 1;
+                });
+                thingJson.rank = bggRank[0].$.value;
+                // Récupération du/des auteur(s)
+                let authorCode = 'boardgamedesigner';
+                let artistCode = 'boardgameartist';
+                let publisherCode = 'boardgamepublisher';
+                let authors = [];
+                let artists = [];
+                let publishers = [];
+                gameXml.link.forEach(function(link) {
+                    //console.log(link);
+                    var type = link.$.type;
+                    //console.log(type);
+                    //console.log(link.$.value);
+                    //console.log('------------------------------------');
+                    switch (type) {
+                        case authorCode:
+                            authors.push(link.$.value);
+                            break;
+                        case artistCode:
+                            artists.push(link.$.value);
+                            break;
+                        case publisherCode:
+                            publishers.push(link.$.value);
+                            break;
+                        default:
+                            //console.log('AIE!!!');
+                            break;
+                    }
+                });
+                //console.log('authors');
+                //console.log(authors);
+                thingJson.authors = authors;
+                thingJson.artists = artists;
+                thingJson.publishers = publishers;
+                //console.log(thingJson);
 
-console.log(thingJson);
                 jsonList.push(thingJson);
             });
         });

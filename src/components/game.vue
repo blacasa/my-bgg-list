@@ -5,6 +5,7 @@
             :title="game.name"
             class="game-card">
             <b-container fluid>
+                
                 <b-row class="my-1">
                     <b-col sm="1" v-if="isEditable">
                         <b-form-checkbox
@@ -16,8 +17,22 @@
                             v-on:change="select">
                         </b-form-checkbox>
                     </b-col>
-                    <b-col sm="3">
-                        de {{ game.minPlayers }} à {{ game.maxPlayers }} joueur(s)
+                    <b-col sm="2">
+                        <img
+                            v-bind:src="game.thumbnail"
+                            class="lazy"
+                            alt="">
+                    </b-col>
+                    <b-col sm="4">
+                        de {{ authors }}
+                    </b-col>
+                    <b-col sm="4" v-show="game.artists.length > 0">
+                        illustré par {{ artists }}
+                    </b-col>
+                </b-row>
+                <b-row class="my-1">
+                    <b-col sm="5">
+                        {{ nbPlayers }}
                     </b-col>
                     <b-col sm="2">
                         {{ game.numPlays }} partie(s)
@@ -50,10 +65,28 @@ export default {
         if (typeof this.game.selected === 'undefined') {
             this.game.selected = 'uncheck';
         }
+        console.log(this.game);
     },
     computed: {
         isEditable: function() {
             return this.mode === 'EDIT';
+        },
+        authors: function() {
+            return this.game.authors.join(', ');
+        },
+        artists: function() {
+            return this.game.artists.join(', ');
+        },
+        nbPlayers: function() {
+            let nbPlayerTxt = 'pour ';
+            if (this.game.minPlayers !== this.game.maxPlayers) {
+                nbPlayerTxt += this.game.minPlayers + ' à ' + this.game.maxPlayers + ' joueur(s)';
+            }
+            else {
+                nbPlayerTxt += this.game.minPlayers + ' joueur(s)';
+            }
+
+            return nbPlayerTxt;
         }
     },
     methods: {
@@ -71,6 +104,10 @@ export default {
 </script>
 
 <style scoped>
+    img {
+        max-height: 75px;
+        max-width: 75px;
+    }
     .game-card {
         margin: 2px 5px;
     }

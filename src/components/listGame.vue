@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import constant from '../constants'
+//import constant from '../constants'
 import game from './game.vue'
 
 export default {

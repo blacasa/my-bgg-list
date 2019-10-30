@@ -5,11 +5,9 @@ import BootstrapVue from 'bootstrap-vue'
 import './registerServiceWorker'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import VueRx from 'vue-rx'
 
-/*
-import 'axios'
-Vue.use(axios)
-*/
+Vue.use(VueRx)
 Vue.use(BootstrapVue)
 Vue.use(VueRouter)
 Vue.config.productionTip = false

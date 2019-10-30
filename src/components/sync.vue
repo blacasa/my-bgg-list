@@ -10,11 +10,16 @@
             :state="state">
             <b-form-input id="input-bgg-name" v-model="name" trim></b-form-input>
         </b-form-group>
+        <!--
         <div id="btn-sync-div">
             <b-button id="btn-sync" :disabled="!state" variant="outline-primary" v-on:click="synchronization">Sync</b-button>
         </div>
+        -->
         <div id="btn-sync-div">
-            <b-button id="btn-sync" :disabled="!state" variant="outline-primary" v-on:click="synchronizationXML">Sync XML</b-button>
+            <b-button id="btn-sync" :disabled="!state" variant="outline-primary" v-on:click="synchronizationXML">Synchroniser !</b-button>
+        </div>
+        <div id="btn-sync-div">
+            <b-button id="btn-sync" :disabled="!state" variant="outline-primary" v-on:click="synchronizationXMLObservable">Synchroniser Observable!</b-button>
         </div>
     </div>
 </template>
@@ -22,6 +27,8 @@
 <script>
 import syncService from '../services/sync.service'
 import constant from '../constants'
+import xmlToJson from '../services/xmlToJson.service.js'
+import arrayService from '../services/array.service.js'
 
 export default {
     name: 'sync',
@@ -52,17 +59,52 @@ export default {
                 .then(function(gameList) {
                     // On stocke la liste des jeux dans le localStorage
                     localStorage.setItem(constant.GAME_LIST_ID, JSON.stringify(gameList));
-                    component.$router.push({ name: 'games', params: { list: constant.GAME_LIST_ID } })
+                    component.$router.push({ name: 'games', params: { list: constant.GAME_LIST_ID } });
                 });
         },
         synchronizationXML: function() {
+            var component = this;
             // TODO: gestion d'un spinner
             syncService
                 .syncBGG(this.name)
                 .then(function(gameList) {
-console.log('gameList:');
-//console.log(gameList);
+                    // On stocke la liste des jeux dans le localStorage
+                    localStorage.setItem(constant.GAME_LIST_ID, JSON.stringify(gameList));
+                    component.$router.push({ name: 'games', params: { list: constant.GAME_LIST_ID } });
+                    console.log('fin de synchronizationXML');
                 });
+        },
+        synchronizationXMLObservable: function() {
+            var component = this;
+            syncService.syncBGGObservable(this.name).subscribe({
+                next: function(xmlResponseData) {
+                    console.log('data reçu dans le next du subscribe');
+                    let collection = xmlToJson.convertCollectionToJson(xmlResponseData);
+                    let fullCollection = [];
+                    let gameIds = '';
+                    collection.forEach(function(game) {
+                        gameIds += game.gameId + ',';
+                    });
+                    var thingsXml = syncService.getBggThingObservable(gameIds).subscribe({
+                        next: function(thingsXml) {
+                            console.log('data reçu dans le next du subscribe THING');
+                            var thingsJson = xmlToJson.convertThingsToJson(thingsXml);
+                            // merge thingsJson et collection dans fullCollection
+                            fullCollection = arrayService.arrayGameMerge(collection, thingsJson);
+                            console.log('fullCollection');                            
+                            // On stocke la liste des jeux dans le localStorage
+                            localStorage.setItem(constant.GAME_LIST_ID, JSON.stringify(fullCollection));
+                            component.$router.push({ name: 'games', params: { list: constant.GAME_LIST_ID } });
+                        },
+                        complete: function() {
+                            console.log('COMPLETE THING');
+                        }
+                    });
+                },
+                complete: function() {
+                    console.log('COMPLETE!!!');
+                }
+            });
         }
     }
 }
