@@ -5,10 +5,19 @@
       <h1>
         {{ listName }} ({{ filteredFullList.length }})
         <b-button v-b-toggle.gamesFilter variant="outline-primary">
-          <img src="../assets/filter.png" class="lazy icon" alt="filtres" />
+          <img src="../assets/filter.png" class="lazy icon rotating" alt="filtres" />
         </b-button>
         <b-button v-b-toggle.saveList variant="outline-primary">
           <img src="../assets/save.png" class="lazy icon" alt="enregistrer" />
+        </b-button>
+
+        <b-button variant="outline-primary" v-on:click="orderClass">
+          <img
+            src="../assets/order.png"
+            class="lazy icon rotating"
+            v-bind:class="ascOrder"
+            alt="tri"
+          />
         </b-button>
       </h1>
     </div>
@@ -187,7 +196,8 @@ export default {
       searchPlayed: "",
       searchAuteur: "",
       searchIllustrateur: "",
-      searchTitre: ""
+      searchTitre: "",
+      order: "ASC"
     };
   },
   computed: {
@@ -212,6 +222,11 @@ export default {
     },
     validFeedback: function() {
       return this.state === true ? "" : "";
+    },
+    ascOrder: function() {
+      return {
+        rotatingOrderAsc: this.order === "ASC"
+      };
     }
   },
   methods: {
@@ -293,12 +308,13 @@ export default {
     },
     cancelSearch: function() {
       this.searchDureeMax = "";
+      this.searchDureeMin = "";
       this.searchNote = "";
       this.searchPlayer = "";
-      (this.searchPlayed = ""),
-        (this.searchAuteur = ""),
-        (this.searchIllustrateur = ""),
-        (this.searchTitre = "");
+      this.searchPlayed = "";
+      this.searchAuteur = "";
+      this.searchIllustrateur = "";
+      this.searchTitre = "";
       this.filteredFullList = this.gameList;
       this.displayedFilteredGameList = this.gameList.slice(0, displayLength);
       if (this.$refs.infiniteLoading) {
@@ -392,6 +408,33 @@ export default {
       return gameListToFilter.filter(game => {
         return game.name.toLowerCase().includes(titre);
       });
+    },
+    orderClass: function() {
+      if (this.order === "ASC") {
+        this.order = "DESC";
+      } else {
+        this.order = "ASC";
+      }
+      // On tri la liste
+      let orderToUse = this.order;
+      this.gameList.sort(function(game1, game2) {
+        if (orderToUse === "ASC") {
+          if (game1.name.toLowerCase() <= game2.name.toLowerCase()) {
+            return -1;
+          } else {
+            return 1;
+          }
+        } else {
+          if (game1.name.toLowerCase() >= game2.name.toLowerCase()) {
+            return -1;
+          } else {
+            return 1;
+          }
+        }
+      });
+
+      // On relance search
+      this.search();
     }
   }
 };
@@ -420,5 +463,14 @@ h1 {
 }
 .search {
   margin: 5px;
+}
+.rotating {
+  transition: transform 1s ease-in-out;
+}
+.rotatingOrderAsc {
+  transform: rotateZ(180deg);
+}
+.rotatingOrderDesc {
+  transform: rotateZ(180deg);
 }
 </style>
