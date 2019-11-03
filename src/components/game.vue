@@ -3,39 +3,48 @@
         <!-- checkbox, titre, auteur, editeur, joueur min, joueur max, note, miniature, nombre de parties jouées. -->
         <b-card
             :title="game.name"
-            class="game-card">
+            class="game-card"
+            v-on:click="selectGame"
+            v-bind:class="isSelected">
             <b-container fluid>
-                
                 <b-row class="my-1">
-                    <b-col sm="1" v-if="isEditable">
-                        <b-form-checkbox
-                            :id="checkboxId"
-                            v-model="game.selected"
-                            :name="checkboxId"
-                            value="check"
-                            unchecked-value="uncheck"
-                            v-on:change="select">
-                        </b-form-checkbox>
-                    </b-col>
-                    <b-col sm="2">
+                    <b-col sm="3">
                         <img
                             v-bind:src="game.thumbnail"
                             class="lazy"
                             alt="">
                     </b-col>
                     <b-col sm="4">
-                        de {{ authors }}
+                        <img
+                            src="../assets/author.png"
+                            class="lazy icon"
+                            alt="auteur(s)"/> {{ authors }}
                     </b-col>
                     <b-col sm="4" v-show="game.artists.length > 0">
-                        illustré par {{ artists }}
+                        <img
+                            src="../assets/illustrator.png"
+                            class="lazy icon"
+                            alt="illustrateur(s)"/> {{ artists }}
                     </b-col>
                 </b-row>
                 <b-row class="my-1">
-                    <b-col sm="5">
-                        {{ nbPlayers }}
+                    <b-col sm="3">
+                        <img
+                            src="../assets/player.png"
+                            class="lazy icon"
+                            alt="joueur(s)"/> {{ nbPlayers }}
+                    </b-col>
+                    <b-col sm="4">
+                        <img
+                            src="../assets/gameplayed.png"
+                            class="lazy icon"
+                            alt="partie(s)"/> {{ game.numPlays }} partie(s)
                     </b-col>
                     <b-col sm="2">
-                        {{ game.numPlays }} partie(s)
+                        <img
+                            src="../assets/duration.png"
+                            class="lazy icon"
+                            alt="durée"/> {{ game.playingTime }}'
                     </b-col>
                     <b-col sm="2" v-show="game.rating >= 0">
                         {{ game.rating }}/10
@@ -62,10 +71,6 @@ export default {
     },
     mounted: function() {
         this.checkboxId = 'checkbox-' + this.idx;
-        if (typeof this.game.selected === 'undefined') {
-            this.game.selected = 'uncheck';
-        }
-        console.log(this.game);
     },
     computed: {
         isEditable: function() {
@@ -78,7 +83,7 @@ export default {
             return this.game.artists.join(', ');
         },
         nbPlayers: function() {
-            let nbPlayerTxt = 'pour ';
+            let nbPlayerTxt = '';
             if (this.game.minPlayers !== this.game.maxPlayers) {
                 nbPlayerTxt += this.game.minPlayers + ' à ' + this.game.maxPlayers + ' joueur(s)';
             }
@@ -87,6 +92,11 @@ export default {
             }
 
             return nbPlayerTxt;
+        },
+        isSelected: function() {
+            return {
+                isSelected: this.mode === 'EDIT' && this.game.selected === 'check',
+            };
         }
     },
     methods: {
@@ -97,6 +107,16 @@ export default {
             }
             else {
                 this.$emit('game-unselected-event', this.idx, this.game);
+            }
+        },
+        selectGame: function() {
+            if (this.game.selected === 'check') {
+                this.game.selected = 'uncheck';
+                this.$emit('game-unselected-event', this.game);
+            }
+            else {
+                this.game.selected = 'check';
+                this.$emit('game-selected-event', this.game);
             }
         }
     }
@@ -110,5 +130,11 @@ export default {
     }
     .game-card {
         margin: 2px 5px;
+    }
+    .icon {
+        height: 25px;
+    }
+    .isSelected {
+        background-color: mediumpurple;
     }
 </style>

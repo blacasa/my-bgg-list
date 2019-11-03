@@ -62,11 +62,7 @@ export default {
                 let artists = [];
                 let publishers = [];
                 gameXml.link.forEach(function(link) {
-                    //console.log(link);
                     var type = link.$.type;
-                    //console.log(type);
-                    //console.log(link.$.value);
-                    //console.log('------------------------------------');
                     switch (type) {
                         case authorCode:
                             authors.push(link.$.value);
@@ -78,16 +74,12 @@ export default {
                             publishers.push(link.$.value);
                             break;
                         default:
-                            //console.log('AIE!!!');
                             break;
                     }
                 });
-                //console.log('authors');
-                //console.log(authors);
                 thingJson.authors = authors;
                 thingJson.artists = artists;
                 thingJson.publishers = publishers;
-                //console.log(thingJson);
 
                 jsonList.push(thingJson);
             });

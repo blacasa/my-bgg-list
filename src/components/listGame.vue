@@ -39,7 +39,7 @@ export default {
         collapseId: function() {
             return 'collapse-'+this.liste.id;
         },
-    },
+    }
 }
 </script>
 

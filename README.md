@@ -7,6 +7,7 @@ liste des jeux, basée sur le json de la liste des jeux associée à mon compte 
 Une entrée dans le json -> une ligne de la liste des jeux.
 Une ligne: checkbox, titre, auteur, editeur, joueur min, joueur max, note, miniature, nombre de parties jouées.
 Une ligne de recherche: titre, editeur, auteur, joueur min, joueur max.
+Une ligne de tri
 
 Un champ de saisie pour le titre de la liste.
 Un bouton d'enregistrement des jeux cochés => création d'un json, stockage en local?
@@ -23,6 +24,9 @@ Un bouton de validation. Si vide, affichage d'un message d'erreur.
 Si validation de la saisie:
 -> enregistrement du login en local
 -> appel au WS
+-> bouton de synchro direct si on a un compte bgg enregistré
+
+=> La synchro se fait directement via l'api de BGG.
 
 ## Technique
 - appel à un WS

@@ -32,6 +32,21 @@ export default {
             if (savedList === null) {
                 savedList = [];
             }
+            // Pour chaque liste, on reconstruit la liste des jeux à partir de la 
+            // liste complète des jeux (celle qui est la plus "fraiche", celle issue
+            // de la dernière synchro)
+            let collection = this.getFromStorage(constant.GAME_LIST_ID);
+            // Si elle n'existe pas, on l'init
+            if (collection === null) {
+                collection = [];
+            }
+            savedList.forEach(function(liste) {
+                let gameList = collection.filter(function(game) {
+                    return liste.list.includes(game.gameId);
+                });
+                liste.list = gameList;
+            });
+
             this.lists = savedList;
         },
         getFromStorage: function(itemId) {

@@ -2,8 +2,8 @@
 import axios from 'axios'
 import { Observable } from 'rxjs';
 
-import xmlToJson from './xmlToJson.service.js'
 import arrayService from './array.service.js'
+import xmlToJson from './xmlToJson.service.js'
 
 export default {
     sync(bggAccount) {
