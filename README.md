@@ -7,18 +7,17 @@ Un menu: liste des jeux, liste des listes, synchro bgg.
 
 liste des jeux, basée sur le json de la liste des jeux associée à mon compte BGG.
 
-| Fait | Description                                                                                                            |
-| ---- | ---------------------------------------------------------------------------------------------------------------------- |
-| Ouep | Une entrée dans le json -> une ligne de la liste des jeux.                                                             |
-| Nope | Une ligne: checkbox, titre, auteur, editeur, joueur min, joueur max, note, miniature, nombre de parties jouées.        |
-| Nope | Une ligne de recherche: titre, editeur, auteur, joueur min, joueur max.                                                |
-| Nope | Une ligne de tri.                                                                                                      |
-| Nope | Un bouton "sélectionner tous" (et "déselectionner tous" aussi?)                                                        |
-| Nope | la zone de tri doit être mis dans un component: attention à la communication entre ce nouveau component et son parent! |
-| Nope | idem pour la zone de sauvegarde à mettre en component                                                                  |
-
-Un champ de saisie pour le titre de la liste.
-Un bouton d'enregistrement des jeux cochés => création d'un json, stockage en local?
+| Fait | Description                                                                                                                                                        |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Ouep | ~~Une entrée dans le json -> une ligne de la liste des jeux.~~                                                                                                     |
+| Nope | Une ligne sélectionnable: ~~titre~~, ~~auteur~~, ~~illustrateur~~, editeur, ~~joueur min~~, ~~joueur max~~, ~~note~~, ~~miniature~~, ~~nombre de parties jouées~~. |
+| Nope | Une ligne de recherche: ~~titre~~, editeur, ~~auteur~~, ~~illustrateur~~, ~~joueur min~~, ~~durée min/max~~, ~~illustrateur~~, note min/max, partie min/max.       |
+| Ouep | ~~Une ligne de tri: bouton ASC/DESC, choix de la colonne.~~                                                                                                        |
+| Nope | Un bouton "sélectionner tous" (et "déselectionner tous" aussi?).                                                                                                   |
+| Ouep | ~~la zone de tri doit être mis dans un component: attention à la communication entre ce nouveau component et son parent.~~!                                        |
+| Nope | idem pour la zone de sauvegarde à mettre en component.                                                                                                             |
+| Ouep | ~~Un champ de saisie pour le titre de la liste.~~                                                                                                                  |
+| Ouep | ~~Un bouton d'enregistrement des jeux cochés => création d'un json, stockage en localStorage.~~                                                                    |
 
 ## Liste de listes:
 
@@ -40,13 +39,18 @@ Si validation de la saisie:
 
 => La synchro se fait directement via l'api de BGG.
 
+=> Récupération des parties jouées? Si oui, il faudrait avoir des stats avec ...
+
 ## Technique
 
-- appel à un WS
-- stockage en local (localStorage, autre?): lecture/ecriture
-- liste/filtre
-- routing
-  Options/Bonus:
+- ~~appel à un WS~~
+- ~~stockage en local (localStorage, autre?): lecture/ecriture~~
+- ~~liste/filtre~~
+- ~~routing~~
+- utilisation du manifest? Notion de pwa?
+
+Options/Bonus:
+
 - export des listes: téléchargement du json (il faudrait alors pouvoir importer ce même fichier), envoi de mail (voir l'API Gmail)
 
 icones:

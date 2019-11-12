@@ -2,24 +2,51 @@
   <div>
     <!-- Titre de la liste -->
     <div>
-      <h1>
-        {{ listName }} ({{ filteredFullList.length }})
-        <b-button v-b-toggle.gamesFilter variant="outline-primary">
-          <img src="../assets/filter.png" class="lazy icon rotating" alt="filtres" />
-        </b-button>
-        <b-button v-b-toggle.saveList variant="outline-primary">
-          <img src="../assets/save.png" class="lazy icon" alt="enregistrer" />
-        </b-button>
-
-        <b-button variant="outline-primary" v-on:click="orderClass">
-          <img
-            src="../assets/order.png"
-            class="lazy icon rotating"
-            v-bind:class="ascOrder"
-            alt="tri"
-          />
-        </b-button>
-      </h1>
+      <h1>{{ listName }} ({{ filteredFullList.length }})</h1>
+      <b-container fluid>
+        <b-row class="my-1">
+          <b-col cols="4">
+            <b-form-select v-model="triColumn" :options="options"></b-form-select>
+          </b-col>
+          <b-col cols="2">
+            <b-button variant="link" v-on:click="orderClass">
+              <img
+                src="../assets/order.png"
+                class="lazy icon rotating"
+                v-bind:class="ascOrder"
+                alt="tri"
+              />
+            </b-button>
+          </b-col>
+          <b-col cols="2">
+            <b-button v-b-toggle.gamesFilter variant="link">
+              <img src="../assets/filter.png" class="lazy icon" alt="filtres" />
+            </b-button>
+          </b-col>
+          <b-col cols="2">
+            <b-button v-b-toggle.saveList variant="link">
+              <img src="../assets/save.png" class="lazy icon" alt="enregistrer" />
+            </b-button>
+          </b-col>
+          <b-col cols="2">
+            <b-button
+              v-if="selectedGames.length < filteredFullList.length"
+              v-on:click="selectAll"
+              variant="link"
+            >
+              <img src="../assets/select.png" class="lazy icon select" alt="selectionner" />
+            </b-button>
+            <b-button
+              v-if="selectedGames.length === filteredFullList.length"
+              v-on:click="selectAll"
+              variant="link"
+            >
+              <div class="select" alt="selectionner" />
+            </b-button>
+          </b-col>
+          <b-col></b-col>
+        </b-row>
+      </b-container>
     </div>
     <div>
       <b-collapse id="saveList" class="mt-2">
@@ -32,6 +59,7 @@
         >
           <b-form-input id="input-list-name" v-model="saveListName" trim></b-form-input>
         </b-form-group>
+        <b-alert variant="success" v-if="savingMessage != ''" show>{{ savingMessage }}</b-alert>
         <div id="btn-save-div">
           <b-button
             id="btn-save"
@@ -40,100 +68,15 @@
             size="sm"
             variant="primary"
             v-on:click="save"
-          >Enregistrer Sélection</b-button>
+          >
+            <b-spinner v-if="saving" small></b-spinner>&nbsp; Enregistrer Sélection
+          </b-button>
         </div>
       </b-collapse>
     </div>
     <!-- Zone de filtres -->
     <b-collapse id="gamesFilter" class="mt-2">
-      <b-card>
-        <b-container fluid>
-          <b-row class="my-1">
-            <b-col sm="4">
-              <b-form-input
-                id="search-titre"
-                type="text"
-                placeholder="Titre"
-                size="sm"
-                v-model.trim="searchTitre"
-              ></b-form-input>
-            </b-col>
-            <b-col sm="4">
-              <b-form-input
-                id="search-auteur"
-                type="text"
-                placeholder="Auteur"
-                size="sm"
-                v-model.trim="searchAuteur"
-              ></b-form-input>
-            </b-col>
-            <b-col sm="4">
-              <b-form-input
-                id="search-illustrateur"
-                type="text"
-                placeholder="Illustrateur"
-                size="sm"
-                v-model.trim="searchIllustrateur"
-              ></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <b-col sm="2">
-              <b-form-input
-                id="search-nbJoueur"
-                type="number"
-                placeholder="Joueurs"
-                size="sm"
-                v-model.number="searchPlayer"
-              ></b-form-input>
-            </b-col>
-            <b-col sm="2">
-              <b-form-input
-                id="search-nbParties"
-                type="number"
-                placeholder="Parties"
-                size="sm"
-                v-model.number="searchPlayed"
-              ></b-form-input>
-            </b-col>
-            <b-col sm="3">
-              <b-form-input
-                id="search-duree"
-                type="number"
-                placeholder="Durée min"
-                size="sm"
-                v-model.number="searchDureeMin"
-              ></b-form-input>
-            </b-col>
-            <b-col sm="3">
-              <b-form-input
-                id="search-duree"
-                type="number"
-                placeholder="Durée max"
-                size="sm"
-                v-model.number="searchDureeMax"
-              ></b-form-input>
-            </b-col>
-            <b-col sm="2">
-              <b-form-input
-                id="search-note"
-                type="number"
-                placeholder="Note"
-                size="sm"
-                v-model.number="searchNote"
-              ></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <b-button pill variant="outline-dark" class="search" v-on:click="search">
-              <img src="../assets/filter.png" class="lazy icon" alt="recherche" />
-            </b-button>
-            <b-button pill variant="outline-dark" class="search" v-on:click="cancelSearch">
-              <img src="../assets/annuler.png" class="lazy icon" alt="vider les filtres" />
-            </b-button>
-          </b-row>
-        </b-container>
-      </b-card>
+      <search-games v-on:search="updateSearch" v-on:search-cancel="cancelSearch"></search-games>
     </b-collapse>
     <game
       v-for="(game, index) in displayedFilteredGameList"
@@ -157,7 +100,9 @@ import { map } from "rxjs/operators";
 
 import constant from "../constants";
 import game from "./game.vue";
+import searchGames from "./searchGames.vue";
 import InfiniteLoading from "vue-infinite-loading";
+import searchService from "../services/search.service";
 
 const displayLength = 20;
 
@@ -165,15 +110,16 @@ export default {
   name: "games",
   components: {
     game,
-    InfiniteLoading
+    InfiniteLoading,
+    searchGames
   },
   subscriptions: function() {
     return {
-      inputKeyup: this.$fromDOMEvent("input", "keyup").pipe(
-        map(() => this.search())
-      ),
-      inputChange: this.$fromDOMEvent("input", "change").pipe(
-        map(() => this.search())
+      triColumnObs: this.$watchAsObservable("triColumn").pipe(
+        map(() => {
+          this.orderGames();
+          this.search();
+        })
       )
     };
   },
@@ -189,15 +135,66 @@ export default {
       selectedGames: [],
       saveListName: "",
       mode: "EDIT",
-      searchDureeMax: "",
-      searchDureeMin: "",
-      searchNote: "",
-      searchPlayer: "",
-      searchPlayed: "",
-      searchAuteur: "",
-      searchIllustrateur: "",
-      searchTitre: "",
-      order: "ASC"
+      saving: false,
+      savingMessage: "",
+      searchObj: {
+        searchDureeMax: "",
+        searchDureeMin: "",
+        searchNoteMin: "",
+        searchNoteMax: "",
+        searchPlayer: "",
+        searchPlayedMin: "",
+        searchPlayedMax: "",
+        searchAuteur: "",
+        searchIllustrateur: "",
+        searchTitre: ""
+      },
+      order: "ASC",
+      options: [
+        {
+          value: "DUREE",
+          text: "Durée",
+          objName: "playingTime",
+          searchType: "int",
+          nullable: true
+        },
+        {
+          value: "JOUEUR_MIN",
+          text: "Joueur min",
+          objName: "minPlayers",
+          searchType: "int",
+          nullable: false
+        },
+        {
+          value: "JOUEUR_MAX",
+          text: "Joueur max",
+          objName: "maxPlayers",
+          searchType: "int",
+          nullable: false
+        },
+        {
+          value: "NOTE",
+          text: "Note",
+          objName: "rating",
+          searchType: "int",
+          nullable: true
+        },
+        {
+          value: "PARTIE",
+          text: "Partie",
+          objName: "numPlays",
+          searchType: "int",
+          nullable: false
+        },
+        {
+          value: "TITRE",
+          text: "Titre",
+          objName: "name",
+          searchType: "text",
+          nullable: false
+        }
+      ],
+      triColumn: "TITRE"
     };
   },
   computed: {
@@ -255,6 +252,7 @@ export default {
       }
     },
     save: function() {
+      this.saving = true;
       // On récupère la liste des listes
       let listOfLists = this.getFromStorage(constant.LIST_LIST_ID);
       // Si elle n'existe pas, on l'init
@@ -280,6 +278,12 @@ export default {
       listOfLists.push(newList);
       // On la stocke dans le localStorage
       localStorage.setItem(constant.LIST_LIST_ID, JSON.stringify(listOfLists));
+      this.savingMessage = "Liste enregistrée.";
+      setTimeout(() => {
+        this.$root.$emit("bv::toggle::collapse", "saveList");
+        this.saving = false;
+        this.savingMessage = "";
+      }, 1000);
     },
     getFromStorage: function(itemId) {
       let item = null;
@@ -296,7 +300,7 @@ export default {
       if (
         this.displayedFilteredGameList.length !== this.filteredFullList.length
       ) {
-        this.search(this.gameList);
+        this.search();
         this.displayedFilteredGameList = this.filteredFullList.slice(
           0,
           this.displayedFilteredGameList.length + displayLength
@@ -307,14 +311,18 @@ export default {
       }
     },
     cancelSearch: function() {
-      this.searchDureeMax = "";
-      this.searchDureeMin = "";
-      this.searchNote = "";
-      this.searchPlayer = "";
-      this.searchPlayed = "";
-      this.searchAuteur = "";
-      this.searchIllustrateur = "";
-      this.searchTitre = "";
+      this.searchObj = {
+        searchDureeMax: "",
+        searchDureeMin: "",
+        searchNoteMin: "",
+        searchNoteMax: "",
+        searchPlayer: "",
+        searchPlayedMin: "",
+        searchPlayedMax: "",
+        searchAuteur: "",
+        searchIllustrateur: "",
+        searchTitre: ""
+      };
       this.filteredFullList = this.gameList;
       this.displayedFilteredGameList = this.gameList.slice(0, displayLength);
       if (this.$refs.infiniteLoading) {
@@ -322,35 +330,7 @@ export default {
       }
     },
     search: function() {
-      let filteredList = this.gameList;
-      // Recherche sur le nombre de joueur
-      if (this.searchPlayer !== "") {
-        filteredList = this.searchNbPlayer(filteredList, this.searchPlayer);
-      }
-      if (this.searchNote !== "") {
-        filteredList = this.searchNotation(filteredList, this.searchNote);
-      }
-      if (this.searchDureeMax !== "") {
-        filteredList = this.searchDureeMaxi(filteredList, this.searchDureeMax);
-      }
-      if (this.searchDureeMin !== "") {
-        filteredList = this.searchDureeMini(filteredList, this.searchDureeMin);
-      }
-      if (this.searchPlayed !== "") {
-        filteredList = this.searchPlayedGame(filteredList, this.searchPlayed);
-      }
-      if (this.searchAuteur !== "") {
-        filteredList = this.searchDesigner(filteredList, this.searchAuteur);
-      }
-      if (this.searchIllustrateur !== "") {
-        filteredList = this.searchIllustrator(
-          filteredList,
-          this.searchIllustrateur
-        );
-      }
-      if (this.searchTitre !== "") {
-        filteredList = this.searchTitle(filteredList, this.searchTitre);
-      }
+      let filteredList = searchService.filter(this.gameList, this.searchObj);
 
       this.filteredFullList = filteredList;
       this.displayedFilteredGameList = this.filteredFullList.slice(
@@ -363,50 +343,50 @@ export default {
 
       return filteredList;
     },
-    searchNbPlayer: function(gameListToFilter, nbPlayer) {
-      return gameListToFilter.filter(game => {
-        return game.minPlayers <= nbPlayer && game.maxPlayers >= nbPlayer;
-      });
+    updateSearch: function(newSearchObj, reset) {
+      this.searchObj = newSearchObj;
+      this.search(reset);
     },
-    searchDureeMaxi: function(gameListToFilter, duree) {
-      return gameListToFilter.filter(game => {
-        return game.playingTime <= duree;
+    orderGames: function() {
+      let game1First = -1;
+      let game2First = 1;
+      // On tri la liste
+      let orderToUse = this.order;
+      let colCode = this.triColumn;
+      let colOption = this.options.filter(option => {
+        return option.value === colCode;
       });
-    },
-    searchDureeMini: function(gameListToFilter, duree) {
-      return gameListToFilter.filter(game => {
-        return game.playingTime >= duree;
-      });
-    },
-    searchNotation: function(gameListToFilter, note, exact = false) {
-      return gameListToFilter.filter(game => {
-        return exact ? game.rating == note : game.rating >= note;
-      });
-    },
-    searchPlayedGame: function(gameListToFilter, nbPartie) {
-      return gameListToFilter.filter(game => {
-        return game.numPlays >= nbPartie;
-      });
-    },
-    searchDesigner: function(gameListToFilter, auteur) {
-      return gameListToFilter.filter(game => {
-        return game.authors
-          .join(", ")
-          .toLowerCase()
-          .includes(auteur);
-      });
-    },
-    searchIllustrator: function(gameListToFilter, illustrateur) {
-      return gameListToFilter.filter(game => {
-        return game.artists
-          .join(", ")
-          .toLowerCase()
-          .includes(illustrateur);
-      });
-    },
-    searchTitle: function(gameListToFilter, titre) {
-      return gameListToFilter.filter(game => {
-        return game.name.toLowerCase().includes(titre);
+      let colunm = "name";
+      let searchType = "string;";
+      if (colOption.length > 0) {
+        colunm = colOption[0].objName;
+        searchType = colOption[0].searchType;
+      }
+      this.gameList.sort(function(game1, game2) {
+        let value1 = game1[colunm];
+        let value2 = game2[colunm];
+        // cas du champ "rating": la valeur est "N/A" si on n'a pas de note
+        if (colunm === "rating") {
+          value1 = value1 === "N/A" ? -1 : value1;
+          value2 = value2 === "N/A" ? -1 : value2;
+        }
+        switch (searchType) {
+          case "string":
+            value1 = value1.toLowerCase();
+            value2 = value2.toLowerCase();
+            break;
+          case "int":
+            value1 = parseInt(value1, 10);
+            value2 = parseInt(value2, 10);
+            break;
+          default:
+            break;
+        }
+        if (orderToUse === "ASC") {
+          return value1 <= value2 ? game1First : game2First;
+        } else {
+          return value1 >= value2 ? game1First : game2First;
+        }
       });
     },
     orderClass: function() {
@@ -415,26 +395,28 @@ export default {
       } else {
         this.order = "ASC";
       }
-      // On tri la liste
-      let orderToUse = this.order;
-      this.gameList.sort(function(game1, game2) {
-        if (orderToUse === "ASC") {
-          if (game1.name.toLowerCase() <= game2.name.toLowerCase()) {
-            return -1;
-          } else {
-            return 1;
-          }
-        } else {
-          if (game1.name.toLowerCase() >= game2.name.toLowerCase()) {
-            return -1;
-          } else {
-            return 1;
-          }
-        }
-      });
+      this.orderGames();
 
       // On relance search
       this.search();
+    },
+    selectAll: function() {
+      let selection = [];
+      let selectAll = this.selectedGames.length < this.filteredFullList.length;
+      // Si on a un élément (au moins) de sélectionné, on vide la
+      // liste, et on ajoute tous les id.
+      this.filteredFullList.forEach(game => {
+        if (selectAll) {
+          selection.push(game.gameId);
+          game.selected = "check";
+        } else {
+          game.selected = "uncheck";
+        }
+      });
+
+      // Si on a autant d'élément sélectionné que dans la liste des
+      // jeux, on vide la liste des sélectionnés
+      this.selectedGames = selection;
     }
   }
 };
@@ -459,7 +441,7 @@ h1 {
   width: 33%;
 }
 .icon {
-  height: 25px;
+  height: 40px;
 }
 .search {
   margin: 5px;
@@ -472,5 +454,11 @@ h1 {
 }
 .rotatingOrderDesc {
   transform: rotateZ(180deg);
+}
+.select {
+  background-image: url(../assets/background.png);
+  background-size: 40px;
+  height: 40px;
+  width: 40px;
 }
 </style>

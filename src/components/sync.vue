@@ -25,7 +25,9 @@
         :disabled="!state"
         variant="outline-primary"
         v-on:click="synchronizationXMLObservable"
-      >Synchroniser !</b-button>
+      >
+        <b-spinner v-if="loading" small></b-spinner>&nbsp; Synchroniser !
+      </b-button>
     </div>
   </div>
 </template>
@@ -56,7 +58,8 @@ export default {
     return {
       name: localStorage.getItem(constant.SYNCED_ACCOUNT)
         ? localStorage.getItem(constant.SYNCED_ACCOUNT)
-        : ""
+        : "",
+      loading: false
     };
   },
   methods: {
@@ -126,6 +129,7 @@ export default {
       });
     },
     synchronizationXMLObservable: function() {
+      this.loading = true;
       var component = this;
       let bggAccount = this.name;
       syncService.bggSync(bggAccount).subscribe({
@@ -138,6 +142,7 @@ export default {
         },
         complete: function() {
           localStorage.setItem(constant.SYNCED_ACCOUNT, bggAccount);
+          component.loading = false;
           // Rédirection vers la lsite des jeux qui viennent d'être synchronisés.
           component.$router.push({
             name: "games",
