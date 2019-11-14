@@ -1,11 +1,11 @@
-importScripts("/my-bgg-list/precache-manifest.87301112507c8f14dc0efbe7c174f2ca.js", "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
+importScripts("/my-bgg-list/precache-manifest.c636b4893b74153fba64582061315c97.js", "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
 
 //if (process.env.NODE_ENV === 'production') {
-register(`registerServiceWorker.js`, {
+register("./src/registerServiceWorker.js", {
   ready() {
     console.log(
       "App is being served from cache by a service worker.\n" +
@@ -30,7 +30,7 @@ register(`registerServiceWorker.js`, {
     );
   },
   error(error) {
-    console.error("Error during service worker registration:", error);
+    console.error("TEST-002: Error during service worker registration:", error);
   }
 });
 //}
