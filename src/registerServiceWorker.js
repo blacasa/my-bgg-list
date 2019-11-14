@@ -3,7 +3,7 @@
 import { register } from "register-service-worker";
 
 //if (process.env.NODE_ENV === 'production') {
-register(`registerServiceWorker.js`, {
+register("./src/registerServiceWorker.js", {
   ready() {
     console.log(
       "App is being served from cache by a service worker.\n" +
@@ -28,7 +28,7 @@ register(`registerServiceWorker.js`, {
     );
   },
   error(error) {
-    console.error("Error during service worker registration:", error);
+    console.error("TEST-002: Error during service worker registration:", error);
   }
 });
 //}
