@@ -13,7 +13,7 @@ liste des jeux, basée sur le json de la liste des jeux associée à mon compte 
 | Nope | Une ligne sélectionnable: ~~titre~~, ~~auteur~~, ~~illustrateur~~, editeur, ~~joueur min~~, ~~joueur max~~, ~~note~~, ~~miniature~~, ~~nombre de parties jouées~~. |
 | Nope | Une ligne de recherche: ~~titre~~, editeur, ~~auteur~~, ~~illustrateur~~, ~~joueur min~~, ~~durée min/max~~, ~~illustrateur~~, note min/max, partie min/max.       |
 | Ouep | ~~Une ligne de tri: bouton ASC/DESC, choix de la colonne.~~                                                                                                        |
-| Nope | Un bouton "sélectionner tous" (et "déselectionner tous" aussi?).                                                                                                   |
+| Ouep | ~~Un bouton "sélectionner tous" (et "déselectionner tous" aussi?).~~                                                                                               |
 | Ouep | ~~la zone de tri doit être mis dans un component: attention à la communication entre ce nouveau component et son parent.~~!                                        |
 | Nope | idem pour la zone de sauvegarde à mettre en component.                                                                                                             |
 | Ouep | ~~Un champ de saisie pour le titre de la liste.~~                                                                                                                  |

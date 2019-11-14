@@ -54,7 +54,7 @@
           </b-col>
           <b-col sm="3">
             <b-form-input
-              id="search-duree"
+              id="search-duree-min"
               type="number"
               placeholder="Durée min"
               size="sm"
@@ -63,7 +63,7 @@
           </b-col>
           <b-col sm="3">
             <b-form-input
-              id="search-duree"
+              id="search-duree-max"
               type="number"
               placeholder="Durée max"
               size="sm"
@@ -83,7 +83,7 @@
           </b-col>
           <b-col sm="3">
             <b-form-input
-              id="search-note"
+              id="search-note-min"
               type="number"
               placeholder="Note min"
               size="sm"
@@ -92,7 +92,7 @@
           </b-col>
           <b-col sm="3">
             <b-form-input
-              id="search-noteMax"
+              id="search-note-max"
               type="number"
               placeholder="Note max"
               size="sm"
