@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "79bc8f80b83d0adbd6c7",
+    "revision": "85708b88c5822a4a7427",
     "url": "/my-bgg-list/css/app.4e649d8e.css"
   },
   {
@@ -52,12 +52,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/my-bgg-list/img/select.3f0c1bdb.png"
   },
   {
-    "revision": "66af8dac645669daeb38ed1b743f95de",
+    "revision": "79a0033238cfbc5bcf3b913c10cc5b0b",
     "url": "/my-bgg-list/index.html"
   },
   {
-    "revision": "79bc8f80b83d0adbd6c7",
-    "url": "/my-bgg-list/js/app.0e269eab.js"
+    "revision": "85708b88c5822a4a7427",
+    "url": "/my-bgg-list/js/app.f782c0cd.js"
   },
   {
     "revision": "ce79c3b89701c540245a",
