@@ -1,4 +1,4 @@
-importScripts("/my-bgg-list/precache-manifest.ccd8e217f48cad2361be3cd1554fa1da.js", "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
+importScripts("/my-bgg-list/precache-manifest.1401c1853b7d24d381e9a820ca2687d5.js", "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 /* eslint-disable no-console */
 
@@ -30,7 +30,28 @@ register("./src/registerServiceWorker.js", {
     );
   },
   error(error) {
-    console.error("TEST-002: Error during service worker registration:", error);
+    console.error("Error during service worker registration:", error);
+  }
+});
+self.addEventListener("fetch", event => {
+  // Skip cross-origin requests, like those for Google Analytics.
+  if (event.request.url.startsWith(self.location.origin)) {
+    event.respondWith(
+      caches.match(event.request).then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        return caches.open("runtime").then(cache => {
+          return fetch(event.request).then(response => {
+            // Put a copy of the response in the runtime cache.
+            return cache.put(event.request, response.clone()).then(() => {
+              return response;
+            });
+          });
+        });
+      })
+    );
   }
 });
 //}
